@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  # NestJS Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: backend_assessment
+      JWT_SECRET: MySecret
+      JWT_EXPIRY_SECONDS: 300
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: backend_assessment
+    ports:
+      - "5432:5432"

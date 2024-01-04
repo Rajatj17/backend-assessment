@@ -24,7 +24,7 @@ export class NotesController {
   @Post()
   @ApiBearerAuth()
   @UseGuards(AuthGuard, ThrottlerCustomGuard)
-  @Throttle({ default: { limit: 2, ttl: 50000 } })
+  @Throttle({ default: { limit: 2, ttl: 5 * 1000 } }) // 2 calls in 5 seconds
   async create(
     @CurrentUser() currentUser: ICurrentUser,
     @Body() createNoteDto: CreateNoteDto
@@ -68,7 +68,8 @@ export class NotesController {
 
   @Get()
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ThrottlerCustomGuard)
+  @Throttle({ default: { limit: 40, ttl: 60 * 1000 } }) // 40 calls in 60 seconds
   async findAll(
     @CurrentUser() currentUser: ICurrentUser,
     @Query('take') take?: number,
@@ -87,7 +88,8 @@ export class NotesController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ThrottlerCustomGuard)
+  @Throttle({ default: { limit: 1, ttl: 5 * 1000 } })
   async update(
     @CurrentUser() currentUser: ICurrentUser,
     @Param('id') id: string,
@@ -113,7 +115,8 @@ export class NotesController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ThrottlerCustomGuard)
+  @Throttle({ default: { limit: 1, ttl: 5 * 1000 } })
   async remove(
     @CurrentUser() currentUser: ICurrentUser,
     @Param('id') id: string

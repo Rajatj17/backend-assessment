@@ -29,8 +29,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
     UsersModule,
     AuthModule,
     ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 5,
+      ttl: 60 * 1000,
+      limit: 100,
     }]),
   ],
   controllers: [AppController],
