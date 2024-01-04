@@ -1,0 +1,1 @@
+export const HASHING_SALT_ROUND = 10;
