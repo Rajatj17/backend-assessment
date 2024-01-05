@@ -43,7 +43,7 @@ export class NotesService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
 
-      throw new HttpException('Failed to created a note', HttpStatus.BAD_GATEWAY);
+      throw new HttpException('Failed to create a note', HttpStatus.BAD_GATEWAY);
     }
   }
 

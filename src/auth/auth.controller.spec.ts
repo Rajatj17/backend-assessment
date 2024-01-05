@@ -7,7 +7,7 @@ import { UsersService } from 'src/users/users.service';
 const userData = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'johndoe@test.com',
+  username: 'johndoe@test.com',
   password: 'Password123'
 };
 
@@ -20,6 +20,9 @@ const loginResponse = {
   access_token: 'mock_access_token'
 }
 
+jest.mock('src/common/guards/auth.guard');
+jest.mock('src/common/guards/throttle.guard');
+
 describe('AuthController', () => {
   let controller: AuthController;
   let service: AuthService;
@@ -29,10 +32,10 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [
         {
-          provide: UsersService,
+          provide: AuthService,
           useValue: {
-            signup: jest.fn(() => [userData]),
-            login: jest.fn(() => userData),
+            signup: jest.fn(() => (signupResponse)),
+            login: jest.fn(() => (loginResponse)),
           }
         },
       ],
@@ -51,7 +54,7 @@ describe('AuthController', () => {
   it('should return the access token', async () => {
     expect(
       await controller.login({
-        email: userData.email,
+        username: userData.username,
         password: userData.password
       }),
     ).toEqual(loginResponse);

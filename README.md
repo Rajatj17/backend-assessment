@@ -12,6 +12,51 @@ This repository contains the implementation of a RESTful API using NestJS, Postg
 
 [PostgreSQL](https://www.postgresql.org/) was selected as the database for its reliability and powerful support for relational data. [TypeORM](https://typeorm.io/) is used as the Object-Relational Mapping (ORM) library, providing a seamless connection between the application and the PostgreSQL database. The choice of PostgreSQL enables the use of complex queries and joins, which can be beneficial for future expansions of the application.
 
+### Structure of the app
+```
+src
+|-- app.controller.ts
+|-- app.module.ts
+|-- app.service.ts
+|-- main.ts
+|-- modules
+|   |-- users
+|       |-- dto
+|       |   |-- create-user.dto.ts
+|       |-- entities
+|       |   |-- user.entity.ts
+|       |-- controllers
+|       |   |-- users.controller.ts
+|       |-- services
+|       |   |-- users.service.ts
+|       |-- users.module.ts
+|-- shared
+|   |-- constants
+|   |   |-- common.constants.ts
+|   |-- filters
+|   |   |-- http-exception.filter.ts
+|   |-- interceptors
+|   |   |-- logging.interceptor.ts
+|   |-- pipes
+|       |-- validation.pipe.ts
+|-- main
+|   |-- database
+|   |   |-- database.module.ts
+|   |   |-- database.providers.ts
+|   |-- config
+|   |   |-- config.module.ts
+|   |   |-- config.service.ts
+|-- test
+|   |-- users.controller.spec.ts
+|   |-- users.service.spec.ts
+|-- .env
+|-- .gitignore
+|-- package.json
+|-- tsconfig.json
+|-- nest-cli.json
+|-- README.md
+```
+
 ## Authentication
 
 JSON Web Token (JWT) is used for authentication. Users can sign up using the `POST /api/auth/signup` endpoint to create a new account and log in with existing credentials using the `POST /api/auth/login` endpoint to obtain an access token.
@@ -50,6 +95,7 @@ npm run test
 - `DELETE /api/notes/:id`: Delete a note by ID for the authenticated user.
 - `POST /api/notes/:id/share`: Share a note with another user for the authenticated user.
 - `GET /api/search?q=:query`: Search for notes based on keywords for the authenticated user.
+- `GET /api/me`: Get current authenticated users info
 
 
 ## What are the Pre-requisites?

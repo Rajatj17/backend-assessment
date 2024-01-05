@@ -12,7 +12,7 @@ jest.mock('bcrypt');
 
 const userMock = {
   id: 1,
-  email: 'test@example.com',
+  username: 'test@example.com',
   password: 'correctHashedPassword',
   firstName: 'John',
   lastName: 'Doe',
@@ -53,10 +53,10 @@ describe('AuthService', () => {
   describe('signup', () => {
     it('should create a new user and return success message', async () => {
       const signupDto: SignupDto = {
-        email: 'test@example.com',
-        password: 'password123',
-        firstName: '',
-        lastName: ''
+        username: userMock.username,
+        password: userMock.password,
+        firstName: userMock.firstName,
+        lastName: userMock.lastName,
       };
 
       const hashedPassword = 'hashedPassword123';
@@ -74,8 +74,8 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should throw UnauthorizedException if passwords do not match', async () => {
       const loginDto: LoginDto = {
-        email: 'test@example.com',
-        password: 'wrongPassword',
+        username: userMock.username,
+        password: 'WrongPassword',
       };
   
       jest.spyOn(usersService, 'findOne').mockResolvedValue(userMock);
@@ -87,8 +87,8 @@ describe('AuthService', () => {
 
     it('should return an access token if passwords match', async () => {
       const loginDto: LoginDto = {
-        email: 'test@example.com',
-        password: 'correctPassword',
+        username: userMock.username,
+        password: userMock.password,
       };
 
       jest.spyOn(usersService, 'findOne').mockResolvedValue(userMock);
@@ -98,7 +98,7 @@ describe('AuthService', () => {
 
       const result = await authService.login(loginDto);
 
-      expect(jwtSignAsyncSpy).toHaveBeenCalledWith({ sub: userMock.id, email: userMock.email });
+      expect(jwtSignAsyncSpy).toHaveBeenCalledWith({ sub: userMock.id, username: userMock.username });
       expect(result).toEqual({ access_token: 'accessToken123' });
     });
   });

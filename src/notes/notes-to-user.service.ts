@@ -22,7 +22,9 @@ export class NotesToUserService {
     noteToUser.userId = userId;
     noteToUser.role = role;
 
-    await this.noteToUserRepo.save(noteToUser);
+    const result = await this.noteToUserRepo.save(noteToUser);
+
+    return result;
   }
 
   async findAll(userId: number, take = 30, skip = 0) {

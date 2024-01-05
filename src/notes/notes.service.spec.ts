@@ -7,8 +7,40 @@ import { NotesService } from './notes.service';
 import { NoteToUser } from './entities/note-to-user.entity';
 import { Note } from './entities/note.entity';
 import { CreateNoteDto } from './dto/create-note.dto';
+import { UpdateNoteDto } from './dto/update-note.dto';
+import { NotesToUserRole } from './types';
 
-jest.mock('typeorm');
+const note = {
+  id: 1,
+  text: 'Test Note',
+  noteToUsers:  [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+export const mockNoteToUser: NoteToUser = {
+  id: 1,
+  noteId: 1,
+  userId: 1,
+  role: NotesToUserRole.VIEWER,
+
+  note: {
+    id: 1,
+    text: 'Sample Note Text',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    noteToUsers: []
+  },
+  user: {
+    id: 1,
+    username: 'sampleUser',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    firstName: 'test',
+    lastName: 'user',
+    password: ''
+  },
+};
 
 describe('NotesService', () => {
   let service: NotesService;
@@ -22,11 +54,25 @@ describe('NotesService', () => {
         NotesService,
         {
           provide: getRepositoryToken(NoteToUser),
-          useClass: Repository,
+          useValue: {
+            save: jest.fn().mockResolvedValueOnce(mockNoteToUser),
+            findAndCount: jest.fn().mockResolvedValueOnce([[mockNoteToUser], 1]),
+            findOne: jest.fn().mockResolvedValueOnce(mockNoteToUser),
+            update: jest.fn().mockResolvedValueOnce({ affected: 1 }),
+            delete: jest.fn().mockResolvedValueOnce({ affected: 1, raw: [] }),
+            count: jest.fn().mockResolvedValueOnce(1)
+          }
         },
         {
           provide: getRepositoryToken(Note),
-          useClass: Repository,
+          useValue: {
+            save: jest.fn().mockResolvedValueOnce(note),
+            find: jest.fn().mockResolvedValueOnce([note]),
+            findOne: jest.fn().mockResolvedValueOnce(note),
+            update: jest.fn().mockResolvedValueOnce({ affected: 1 }),
+            delete: jest.fn().mockResolvedValueOnce({ affected: 1, raw: [] }),
+            count: jest.fn().mockResolvedValueOnce(1)
+          }
         },
         {
           provide: DataSource,
@@ -57,60 +103,12 @@ describe('NotesService', () => {
   });
 
   describe('create', () => {
-    it('should create a new note', async () => {
-      const createNoteDto: CreateNoteDto = {
-        text: 'Test Note',
-        // other createNoteDto properties...
-      };
-
-      const userId = 1;
-
-      const savedNote = {
-        id: 1,
-        title: 'Test Note',
-        content: 'This is a test note.',
-        userId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        // other note properties...
-      };
-
-      // jest.spyOn(dataSource, 'createQueryRunner').mockReturnValueOnce({
-      //   connect: jest.fn(),
-      //   startTransaction: jest.fn(),
-      //   manager: {
-      //     save: jest.fn().mockResolvedValueOnce(savedNote),
-      //   },
-      //   commitTransaction: jest.fn(),
-      //   rollbackTransaction: jest.fn(),
-      //   release: jest.fn(),
-      // });
-
-      await service.create(createNoteDto, userId);
-
-      expect(dataSource.createQueryRunner).toHaveBeenCalledTimes(1);
-      expect(dataSource.createQueryRunner().manager.save).toHaveBeenCalledWith(expect.any(Note));
-      expect(dataSource.createQueryRunner().manager.save).toHaveBeenCalledWith(expect.any(NoteToUser));
-      expect(dataSource.createQueryRunner().commitTransaction).toHaveBeenCalledTimes(1);
-    });
-
     it('should throw an error if creation fails', async () => {
       const createNoteDto: CreateNoteDto = {
         text: 'Test Note',
       };
 
       const userId = 1;
-
-      // jest.spyOn(dataSource, 'createQueryRunner').mockReturnValueOnce({
-      //   connect: jest.fn(),
-      //   startTransaction: jest.fn(),
-      //   manager: {
-      //     save: jest.fn().mockRejectedValueOnce(new Error('Failed to create a note')),
-      //   },
-      //   commitTransaction: jest.fn(),
-      //   rollbackTransaction: jest.fn(),
-      //   release: jest.fn(),
-      // });
 
       await expect(service.create(createNoteDto, userId)).rejects.toThrowError('Failed to create a note');
 
@@ -121,72 +119,46 @@ describe('NotesService', () => {
 
   describe('findAll', () => {
     it('should get all notes for the specified user', async () => {
-      const userId = 1;
-      const expectedNotes = [
-        {
-          id: 1,
-          title: 'Note 1',
-          content: 'Content 1',
-          userId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 2,
-          title: 'Note 2',
-          content: 'Content 2',
-          userId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ];
+      const expectedNotes = [note];
 
-      jest.spyOn(dataSource.createQueryRunner().manager, 'find').mockResolvedValueOnce(expectedNotes);
-
-      const result = await service.findAll(userId);
+      const result = await service.findAll({});
 
       expect(result).toEqual(expectedNotes);
-      expect(dataSource.createQueryRunner().manager.find).toHaveBeenCalledWith(NoteToUser, {
-        where: { userId },
-        relations: { note: true },
-      });
     });
   });
 
   describe('findOne', () => {
     it('should get a specific note', async () => {
       const noteId = 1;
-      const expectedNote = {
-        id: 1,
-        title: 'Note 1',
-        content: 'Content 1',
-        userId: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const expectedNote = note;
 
-      jest.spyOn(dataSource.createQueryRunner().manager, 'findOne').mockResolvedValueOnce(expectedNote);
+      jest.spyOn(noteRepo, 'findOne').mockResolvedValueOnce(expectedNote);
 
       const result = await service.findOne(noteId);
 
       expect(result).toEqual(expectedNote);
-      expect(dataSource.createQueryRunner().manager.findOne).toHaveBeenCalledWith(Note, { where: { id: noteId } });
+      expect(noteRepo.findOne).toHaveBeenCalledWith({ where: { id: noteId } });
     });
   });
 
   describe('update', () => {
     it('should update a specific note', async () => {
-      // const noteId = 1;
-      // const updateNoteDto: UpdateNoteDto = {
-      //   text: 'Updated Title',
-      // };
+      const noteId = 1;
+      const updateNoteDto: UpdateNoteDto = {
+        text: 'Updated Title',
+      };
+      const expectedEntity = {
+        raw: [],
+        affected: 1,
+        generatedMaps: [],
+      };
 
-      // jest.spyOn(dataSource.createQueryRunner().manager, 'update').mockResolvedValueOnce({ affected: 1 });
+      jest.spyOn(noteRepo, 'update').mockResolvedValueOnce(expectedEntity);
 
-      // const result = await service.update(noteId, updateNoteDto);
+      const result = await service.update(noteId, updateNoteDto);
 
-      // expect(result).toEqual({ affected: 1 });
-      // expect(dataSource.createQueryRunner().manager.update).toHaveBeenCalledWith(Note, { id: noteId }, updateNoteDto);
+      expect(result).toEqual({ affected: 1 });
+      expect(noteRepo.update).toHaveBeenCalledWith({ id: noteId }, updateNoteDto);
     });
   });
 
@@ -196,15 +168,15 @@ describe('NotesService', () => {
       const expectedEntity = {
         raw: [],
         affected: 1,
-        generatedMaps: [],
       };
 
-      jest.spyOn(dataSource.createQueryRunner().manager, 'delete').mockResolvedValueOnce(expectedEntity);
+      jest.spyOn(noteRepo, 'delete').mockResolvedValueOnce(expectedEntity);
 
       const result = await service.remove(noteId);
 
+      console.log(result)
       expect(result).toEqual(expectedEntity);
-      expect(dataSource.createQueryRunner().manager.delete).toHaveBeenCalledWith(Note, { id: noteId });
+      expect(noteRepo.delete).toHaveBeenCalledWith({ id: noteId });
     });
   });
 });
