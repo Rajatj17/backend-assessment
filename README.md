@@ -95,6 +95,9 @@ npm run test
 - `DELETE /api/notes/:id`: Delete a note by ID for the authenticated user.
 - `POST /api/notes/:id/share`: Share a note with another user for the authenticated user.
 - `GET /api/search?q=:query`: Search for notes based on keywords for the authenticated user.
+
+### User Endpoints
+
 - `GET /api/me`: Get current authenticated users info
 
 
@@ -155,6 +158,19 @@ Run unit tests and integration tests:
 npm test
 ```
 
-## Conclusion
+## Author
 
-This project provides a robust RESTful API using NestJS and PostgreSQL, with JWT for authentication, rate limiting for high traffic, and comprehensive testing. Feel free to explore and extend the functionality as needed. If you encounter any issues, please refer to the documentation or reach out to the maintainers.
+[Rajat](https://github.com/Rajatj17)
+
+Software Engineer with 4+ years of experience specializing in Node.Js, Golang, and Python. Proven expertise in building robust APIs, architecting scalable features, and deploying on cloud platforms. Adept at leading teams and delivering complex backend solutions.
+
+### Contact Information
+
+For inquiries or feedback, feel free to reach out to us:
+
+- **Email:** [rajatjainwal5@gmail.com](mailto:rajatjainwal5@gmail.com)
+- **Twitter:** [@rajatj17](https://twitter.com/rajatj17)
+- **LinkedIn:** [rajatj17](https://www.linkedin.com/in/rajatj17)
+
+### Acknowledgements
+I have used NestJs Documentation to build this repo. Thank you!
