@@ -118,11 +118,13 @@ git clone <repository-url>
 # Create the config file from the sample-config file
 cp .env.example .env
 
-# Add your database details
- user: 'db_username',
- password: 'db_password',
- database: 'db_dbname',
- host: 'db_host',
+# Add your database details in .env
+DB_DIALECT='postgres'
+DB_HOST='localhost'
+DB_PORT=5432
+DB_USER='postgres'
+DB_PASSWORD='postgres'
+DB_NAME='backend_assessment'
 
 # Install NPM dependencies
 npm install;
