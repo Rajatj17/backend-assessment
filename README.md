@@ -1,4 +1,4 @@
-# NestJS-PostgreSQL RESTful API
+# Note Sharing Platform API's
 
 This repository contains the implementation of a RESTful API using NestJS, PostgreSQL, and various tools for authentication, rate limiting, and testing.
 
