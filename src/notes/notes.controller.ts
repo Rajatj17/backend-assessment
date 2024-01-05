@@ -81,7 +81,10 @@ export class NotesController {
       success: true,
       message: 'Notes list!',
       data: {
-        notes: transformNoteToUserResponse(notes)
+        count: notes[1],
+        notes: transformNoteToUserResponse(notes[0]),
+        current_limit: take ?? 30,
+        current_offset: skip ?? 0
       }
     }
   }

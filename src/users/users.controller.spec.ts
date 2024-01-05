@@ -3,13 +3,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
+import { ICurrentUser } from 'src/notes/types';
+
+const currentUser: ICurrentUser = {
+  sub: 1,
+  username: 'test@example.com',
+};
 
 const userData = {
   id: 1,
   firstName: 'John',
   lastName: 'Doe',
-  email: 'johndoe@test.com'
+  username: 'test@example.com',
+  createdAt: new Date,
+  updatedAt: new Date,
 };
+
+jest.mock('common/guards/auth.guard')
 
 describe('UserController', () => {
   let controller: UsersController;
@@ -25,12 +35,7 @@ describe('UserController', () => {
             findAll: jest.fn(() => [userData]),
             create: jest.fn(() => userData),
             findOne: jest.fn().mockImplementation((id: string) =>
-              Promise.resolve({
-                firstName: 'John',
-                lastName: 'Doe',
-                email: 'johndoe@test.com',
-                id,
-              }),
+              Promise.resolve(userData),
             ),
             remove: jest.fn(),
             uodate: jest
@@ -53,7 +58,13 @@ describe('UserController', () => {
     service = module.get<UsersService>(UsersService)
   });
 
-  it('should get the users', async () => {
-    expect(await controller.findAll()).toEqual([userData]);
+  it('should get the current user data', async () => {
+    expect(await controller.me(currentUser)).toEqual({
+      success: true,
+      message: 'Profile Fetched Succesfully!',
+      data: {
+        user: userData
+      }
+    });
   });
 });

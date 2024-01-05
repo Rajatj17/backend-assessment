@@ -23,7 +23,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
       database: applicationConfig.db.dbName,
       entities: [ User, Note, NoteToUser ],
       synchronize: true,
-      logging: true,
     }),
     NotesModule,
     UsersModule,

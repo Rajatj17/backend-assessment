@@ -65,8 +65,10 @@ export class NotesService {
     });
   }
 
-  update(id: number, updateNoteDto: UpdateNoteDto) {
-    return this.noteRepo.update({ id }, updateNoteDto);
+  async update(id: number, updateNoteDto: UpdateNoteDto) {
+    const result = await this.noteRepo.update({ id }, updateNoteDto);
+
+    return result;
   }
 
   async remove(id: number) {
@@ -89,7 +91,7 @@ export class NotesService {
       })
       .take(take)
       .skip(skip)
-      .getMany();
+      .getManyAndCount();
 
     return notes;
   }

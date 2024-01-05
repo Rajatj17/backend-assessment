@@ -18,7 +18,13 @@ JSON Web Token (JWT) is used for authentication. Users can sign up using the `PO
 
 ## Rate Limiting and Request Throttling
 
-To handle high traffic, rate limiting and request throttling are implemented. NestJS provides built-in support for rate limiting through middleware. Adjust the configuration in the `.env` file to customize rate limiting parameters.
+To handle high traffic, rate limiting and request throttling are implemented. NestJS provides built-in support for rate limiting through middleware. Used `req.ip` for unique key to identity anonymous session & `req.user.sub (Decode token is assigned to req.user)` for authenticated session
+
+## Security
+
+The application implements Cross-Origin Resource Sharing (CORS) to enhance security by restricting access to certain domains using [cors](https://github.com/expressjs/cors) package which is built-in to the NestJs.
+
+To bolster the security of the application, the [Helmet](https://helmetjs.github.io/) middleware is utilized to set various HTTP headers in the server's responses. These headers enhance the security posture by preventing common web vulnerabilities and providing an additional layer of protection.
 
 ## Testing
 
@@ -45,39 +51,57 @@ npm run test
 - `POST /api/notes/:id/share`: Share a note with another user for the authenticated user.
 - `GET /api/search?q=:query`: Search for notes based on keywords for the authenticated user.
 
-## Instructions to Run the Code
 
-### Prerequisites
+## What are the Pre-requisites?
 
-1. Clone the repository:
+Binaries      | Version
+------------- | -------------
+NodeJS        | >= 18.16.1
+NPM           | >= 9.5.1
+PostgreSQL    | >= 12.1
 
-    ```bash
-    git clone <repository-url>
-    ```
+## How to SetUp & Install?
 
-2. Create a copy of the `.env.example` file and name it `.env`. Update the configurations in the `.env` file as needed.
+```sh
+# Clone the repository
+git clone <repository-url>
 
-3. Install dependencies:
+# Create the config file from the sample-config file
+cp .env.example .env
 
-    ```bash
-    npm install
-    ```
+# Add your database details
+ user: 'db_username',
+ password: 'db_password',
+ database: 'db_dbname',
+ host: 'db_host',
 
-4. Run database migrations:
+# Install NPM dependencies
+npm install;
 
-    ```bash
-    npm run migrations
-    ```
+# Run database migrations:
+npm run typeorm:run-migrations
+```
 
-5. Start the development server:
+## How to Run?
 
-    ```bash
-    npm run start:dev
-    ```
+### Development Environment
 
-6. Access the API documentation at [http://localhost:3000/api](http://localhost:3000/api) using Swagger.
+```sh
+# Run local server with --watch option
+npm run start:dev;
+```
 
-### Running Tests
+### Production Environment
+
+```sh
+# Create a Build
+npm run build 
+
+# Run the build folder
+npm run start:prod;
+```
+
+## Running Tests
 
 Run unit tests and integration tests:
 

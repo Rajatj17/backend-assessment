@@ -8,7 +8,7 @@ import { ICurrentUser } from 'src/notes/types';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get('me')
   @UseGuards(AuthGuard)
   async me(@CurrentUser() currentUser: ICurrentUser) {
     const user = await this.usersService.findOne({

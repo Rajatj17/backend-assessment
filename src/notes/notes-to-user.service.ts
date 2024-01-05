@@ -26,7 +26,7 @@ export class NotesToUserService {
   }
 
   async findAll(userId: number, take = 30, skip = 0) {
-    const notes = await this.noteToUserRepo.find({
+    const notes = await this.noteToUserRepo.findAndCount({
       where: {
         userId,
       },

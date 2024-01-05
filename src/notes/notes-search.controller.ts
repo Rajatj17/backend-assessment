@@ -16,14 +16,19 @@ export class NotesSearchController {
   async search(
     @CurrentUser() currentUser: ICurrentUser,
     @Query('q') q: string,
+    @Query('take') take?: number,
+    @Query('skip') skip?: number,
   ) {
-    const note = await this.notesService.search(+currentUser.sub, q);
+    const notes = await this.notesService.search(+currentUser.sub, q, take, skip);
 
     return {
       success: true,
       message: 'Notes Fetched Successfully!',
       data: {
-        note: transformSearchToUserResponse(note)
+        count: notes[1],
+        notes: transformSearchToUserResponse(notes[0]),
+        current_limit: take ?? 30,
+        current_offset: skip ?? 0
       }
     }
   }
